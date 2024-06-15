@@ -1,20 +1,17 @@
-import jwt from 'jsonwebtoken'
-import User from '../models/User.js'
+import { decodeToken } from "../utils/tokenHelper.js";
 
-const auth = async (req, res, next) => {
-    const token = req.header('Authorization'.replace('Bearer', ''));
-
-    if (!token) {
-        return res.status(401).json({ msg: 'No token, please try again' })
-    }
+export const authToken = async (req, res, next) => {
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET)
-        req.user = await User.findById(decoded.id).select('-password')
-        next()
-    } catch (error) {
-        console.log(error);
-        res.status(401).json({ msg: 'Token is not valid' })
-    }
-}
+        const token = req.get("Authorization");
 
-export default auth
+        if (token) {
+            const decodeDetails = decodeToken(token);
+            req.email = decodeDetails.email;
+            next();
+        } else {
+            return res.json({ message: "Token Not Found" });
+        }
+    } catch (error) {
+        return res.json({ message: "Invalid Token" });
+    }
+};
