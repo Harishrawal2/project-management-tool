@@ -1,6 +1,6 @@
 import User from '../models/User.js'
 import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
+import { createToken } from '../utils/tokenHelper.js';
 
 // Function to validate password complexity
 function isValidPassword(password) {
@@ -37,7 +37,7 @@ export const registerUser = async (req, res) => {
                 email: user.email,
                 role: user.role,
                 _id: user._id,
-            }, token
+            }
         });
 
     } catch (err) {
@@ -62,14 +62,9 @@ export const loginUser = async (req, res) => {
             return res.status(400).json({ msg: 'Invalid credentials' });
         }
 
-        // Create JWT token
-        const token = jwt.sign(
-            { userId: user._id, email: user.email },
-            process.env.JWT_SECRET,
-            { expiresIn: "1h" }
-        );
-
-        // Set the token as a cookie
+        // Assume user is already authenticated and we have user details
+        const token = createToken();
+        // Set the token as a cookie 
         // Expires in 1 hour
         res.cookie("token", token, { httpOnly: true, maxAge: 3600000 });
 

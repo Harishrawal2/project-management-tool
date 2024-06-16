@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import cors from 'cors'
 import DBConnection from './src/config/db.js'
 import authRoutes from './src/routes/authRoutes.js'
+import projectRoutes from './src/routes/projectRoutes.js'
 import cookieParser from 'cookie-parser'
 
 // Middleware configuration
@@ -18,6 +19,7 @@ DBConnection()
 
 // Define Routes
 app.use('/api/auth', authRoutes)
+app.use('/api/project', projectRoutes)
 
 const port = process.env.PORT || 8080
 
